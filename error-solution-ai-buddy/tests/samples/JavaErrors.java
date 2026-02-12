@@ -11,11 +11,11 @@ public class JavaErrors {
     public static void main(String[] args) {
         // Uncomment one to test:
         
-        // testNullPointer();
+        testNullPointer();
         // testArrayBounds();
         // testClassCast();
         
-        System.out.println("Java test file. Uncomment a method call to trigger an error.");
+        // System.out.println("Java test file. Uncomment a method call to trigger an error.");
     }
 
     // Example 1: NullPointerException

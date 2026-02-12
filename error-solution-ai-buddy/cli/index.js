@@ -36,6 +36,8 @@ program
   .name('errbuddy')
   .description('AI-powered error explanations directly in your terminal')
   .version('1.0.0')
+  .enablePositionalOptions()
+  .passThroughOptions()
   .argument('<command>', 'Command to run (node, npm, java, dotnet, etc.)')
   .argument('[args...]', 'Arguments to pass to the command')
   .option('--no-ai', 'Disable AI explanations (show errors only)')
@@ -131,7 +133,13 @@ async function runCommand(command, args, options) {
   // - stdin: inherited (user can type input)
   // - stdout: piped (we capture and forward it)
   // - stderr: piped (we capture, analyze, then forward it)
-  const child = spawn(command, args, {
+  // 
+  // We join command + args into a single shell string to avoid Node.js 24+
+  // DEP0190 warning ("Passing args to a child process with shell option true
+  // can lead to security vulnerabilities"). This is safe here because the
+  // user controls the input (they typed the command themselves).
+  const fullCommand = [command, ...args].join(' ');
+  const child = spawn(fullCommand, [], {
     stdio: ['inherit', 'pipe', 'pipe'],
     shell: true,  // Required for Windows compatibility
     env: { ...process.env, FORCE_COLOR: '1' }  // Preserve colors
