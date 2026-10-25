@@ -14,30 +14,9 @@ Stop copying stack traces into a browser. Prefix your command with `errbuddy` an
 
 </div>
 
-```text
-$ errbuddy node app.js
-
-TypeError: Cannot read properties of undefined (reading 'map')
-    at app.js:12:5
-
-╭─ 🤖 Error Buddy Explanation ──────────────────────────────────────╮
-│                                                                   │
-│  📘 What is this?                                                 │
-│  You tried to call .map() on a variable that is undefined.        │
-│                                                                   │
-│  ❓ Why it happens                                                │
-│  The data you expected (probably from an API) wasn't there yet.   │
-│                                                                   │
-│  ✅ How to fix it                                                 │
-│  Check that the variable exists before calling .map().            │
-│                                                                   │
-│  💡 Example                                                       │
-│    if (data) {                                                    │
-│      data.map(...)                                                │
-│    }                                                              │
-│                                                                   │
-╰───────────────────────────────────────────────────────────────────╯
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sithija-jayasinghe/solution-ai-buddy-v1/main/error-solution-ai-buddy/docs/demo.gif" alt="errbuddy running node app.js: a TypeError appears, followed by an explanation of what went wrong, why, and how to fix it" width="760">
+</p>
 
 ## Why errbuddy
 
