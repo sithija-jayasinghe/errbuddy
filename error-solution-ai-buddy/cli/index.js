@@ -124,7 +124,10 @@ async function runCommand(command, args, options) {
     ollamaAvailable = await aiService.checkConnection();
     if (!ollamaAvailable) {
       console.log(chalk.yellow('⚠️  Ollama not detected. Using pattern matching only.'));
-      console.log(chalk.gray('   Run "ollama serve" to enable AI explanations.\n'));
+      console.log(chalk.gray('   For AI explanations (free, runs locally):'));
+      console.log(chalk.gray('     1. Install Ollama:   https://ollama.com/download'));
+      console.log(chalk.gray(`     2. Download a model: ollama pull ${options.model || CONFIG.ollamaModel}`));
+      console.log(chalk.gray('     3. Start it:         ollama serve\n'));
     }
   }
 

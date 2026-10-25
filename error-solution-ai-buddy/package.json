@@ -7,11 +7,18 @@
   "bin": {
     "errbuddy": "./cli/index.js"
   },
+  "files": [
+    "cli",
+    "backend",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "node cli/index.js",
     "test": "node --test tests/*.js",
     "lint": "eslint cli/ backend/",
-    "demo": "node tests/samples/js-errors.js"
+    "demo": "node tests/samples/js-errors.js",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "error",
@@ -20,10 +27,22 @@
     "developer-tools",
     "terminal",
     "ollama",
-    "cli"
+    "cli",
+    "llm",
+    "error-explainer",
+    "local-ai"
   ],
-  "author": "",
+  "author": "Sithija Harshana Jayasinghe",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sithija-jayasinghe/solution-ai-buddy-v1.git",
+    "directory": "error-solution-ai-buddy"
+  },
+  "homepage": "https://github.com/sithija-jayasinghe/solution-ai-buddy-v1#readme",
+  "bugs": {
+    "url": "https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/issues"
+  },
   "dependencies": {
     "chalk": "^5.3.0",
     "commander": "^11.1.0",

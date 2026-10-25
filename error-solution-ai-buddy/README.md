@@ -47,17 +47,28 @@ TypeError: Cannot read properties of undefined (reading 'map')
 
 ## Quick Start
 
-### One-Command Setup (Recommended)
-
 ```bash
-# Windows PowerShell (run as Administrator)
-.\setup.ps1
+npm install -g error-solution-ai-buddy
+errbuddy node app.js
+```
 
-# macOS/Linux
-chmod +x setup.sh && ./setup.sh
-This will:
-1. ✅ Install dependencies
-2. ✅ Make `errbuddy` available globally
+That's it. Errors are explained with built-in pattern matching straight away.
+
+### Turn on AI explanations (optional, free, runs on your machine)
+
+errbuddy uses [Ollama](https://ollama.com) to run a small AI model locally, so your code and errors never leave your computer.
+
+1. Install Ollama from https://ollama.com/download
+2. Download the default model (about 400 MB):
+   ```bash
+   ollama pull qwen2.5:0.5b
+   ```
+3. Make sure Ollama is running (`ollama serve`, or open the Ollama app)
+
+Want better explanations? Use a bigger model: `errbuddy --model llama3.2 node app.js`
+
+If Ollama isn't running, errbuddy still works — it falls back to pattern matching.
+
 ## Installation & Usage
 
 ### 1. Download the Project
@@ -258,7 +269,7 @@ Configuration is stored in `~/.errbuddy/config.json`:
 
 1. Make sure Ollama is running: `ollama serve`
 2. Check it's accessible: `curl http://localhost:11434/api/tags`
-3. Pull a model: `ollama pull llama3.2`
+3. Pull a model: `ollama pull qwen2.5:0.5b`
 
 ### "AI explanation timed out"
 
