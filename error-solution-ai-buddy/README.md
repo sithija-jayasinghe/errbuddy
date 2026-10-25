@@ -1,292 +1,196 @@
-# Error → Solution AI Buddy 🤖
+<div align="center">
 
-> AI-powered error explanations directly in your terminal. No context switching!
+# errbuddy
 
-![Node.js](https://img.shields.io/badge/Node.js-18+-green)
-![Ollama](https://img.shields.io/badge/AI-Ollama-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+**Plain-English explanations for errors, right in your terminal.**
 
-## The Problem
+Stop copying stack traces into a browser. Prefix your command with `errbuddy` and get *what* went wrong, *why*, and *how to fix it* — from an AI model that runs on your own machine.
 
-You're coding. An error appears. You:
-1. Copy the error
-2. Open browser
-3. Paste into Google/ChatGPT
-4. Read through results
-5. Go back to terminal
-6. Forget what you were doing
+[![npm version](https://img.shields.io/npm/v/error-solution-ai-buddy?color=cb3837&logo=npm)](https://www.npmjs.com/package/error-solution-ai-buddy)
+[![npm downloads](https://img.shields.io/npm/dm/error-solution-ai-buddy)](https://www.npmjs.com/package/error-solution-ai-buddy)
+![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
+![AI](https://img.shields.io/badge/AI-local%20via%20Ollama-black)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/LICENSE)
 
-**That's 5+ context switches. We fix that.**
+</div>
 
-## The Solution
-
-```bash
+```text
 $ errbuddy node app.js
 
 TypeError: Cannot read properties of undefined (reading 'map')
     at app.js:12:5
 
-╭─ 🤖 Error Buddy Explanation: ─────────────────────────────────────╮
-│                                                                    │
+╭─ 🤖 Error Buddy Explanation ──────────────────────────────────────╮
+│                                                                   │
 │  📘 What is this?                                                 │
-│  You tried to use `.map()` on a variable that is undefined.       │
-│                                                                    │
-│  ❓ Why it happens?                                                │
-│  The data you expected (probably from an API) wasn't available.   │
-│                                                                    │
-│  ✅ How to fix it:                                                 │
-│  Check if the variable exists before calling `.map()`.            │
-│                                                                    │
-│  💡 Example:                                                       │
-│    if (data) {                                                     │
-│      data.map(...)                                                 │
-│    }                                                               │
-│                                                                    │
-╰────────────────────────────────────────────────────────────────────╯
+│  You tried to call .map() on a variable that is undefined.        │
+│                                                                   │
+│  ❓ Why it happens                                                │
+│  The data you expected (probably from an API) wasn't there yet.   │
+│                                                                   │
+│  ✅ How to fix it                                                 │
+│  Check that the variable exists before calling .map().            │
+│                                                                   │
+│  💡 Example                                                       │
+│    if (data) {                                                    │
+│      data.map(...)                                                │
+│    }                                                              │
+│                                                                   │
+╰───────────────────────────────────────────────────────────────────╯
 ```
 
-## Quick Start
+## Why errbuddy
+
+When an error shows up, most of us copy it, open a browser, paste it into a search engine or chatbot, read, switch back, and lose our train of thought. errbuddy removes every one of those steps.
+
+- **Zero context switching.** The explanation appears right under the error.
+- **Private by default.** The AI runs locally through [Ollama](https://ollama.com). Your code and errors never leave your computer.
+- **Free.** No API keys, no accounts, no usage limits.
+- **Works offline, and without AI.** If Ollama isn't running, errbuddy falls back to built-in explanations for common errors.
+- **Drop-in.** Your program runs exactly as before: same output, same input, same exit code.
+
+## Quick start
 
 ```bash
 npm install -g error-solution-ai-buddy
 errbuddy node app.js
 ```
 
-That's it. Errors are explained with built-in pattern matching straight away.
+That's it. You'll get pattern-based explanations straight away.
 
-### Turn on AI explanations (optional, free, runs on your machine)
+### Turn on AI explanations (optional)
 
-errbuddy uses [Ollama](https://ollama.com) to run a small AI model locally, so your code and errors never leave your computer.
-
-1. Install Ollama from https://ollama.com/download
-2. Download the default model (about 400 MB):
+1. Install Ollama from [ollama.com/download](https://ollama.com/download)
+2. Download the default model (about 400 MB, runs fine on low-RAM laptops):
    ```bash
    ollama pull qwen2.5:0.5b
    ```
-3. Make sure Ollama is running (`ollama serve`, or open the Ollama app)
+3. Make sure Ollama is running: open the Ollama app, or run `ollama serve`
 
-Want better explanations? Use a bigger model: `errbuddy --model llama3.2 node app.js`
+The next time you run `errbuddy`, it detects Ollama automatically. If the default model isn't installed but another one is, errbuddy uses that instead.
 
-If Ollama isn't running, errbuddy still works — it falls back to pattern matching.
+## Usage
 
-## Installation & Usage
-
-### 1. Download the Project
-- Clone the repository:
-  ```sh
-  git clone <your-repo-url>
-  ```
-
-### 2. Install Dependencies
-- In the project folder, run:
-  ```sh
-  npm install
-  ```
-
-### 3. Use the CLI Tool
-- Go to the CLI directory:
-  ```sh
-  cd error-solution-ai-buddy/cli
-  npm link
-  ```
-- Now you can run the CLI from anywhere:
-  ```sh
-  errbuddy <your-command>
-  # Example:
-  errbuddy node test-error.js
-  ```
-
-### 4. Use the VS Code Extension
-- Build the extension (if needed):
-  ```sh
-  cd error-solution-ai-buddy/extension
-  npm install
-  npm run build
-  ```
-- Install the extension in VS Code:
-  - Use "Install from VSIX..." if you have a packaged file.
-  - Or run:
-    ```sh
-    code --install-extension <path-to-extension-folder>
-    ```
-- Reload VS Code.
-
-### 5. Start Using
-- For CLI: Run commands with `errbuddy` prefix.
-- For extension: Use terminal and Error Buddy commands in VS Code.
-### Manual Setup
-
-#### Step 1: Install Ollama (Optional - for AI features)
+Put `errbuddy` in front of the command you normally run:
 
 ```bash
-# Windows: Download from https://ollama.ai
-
-# macOS
-brew install ollama
-
-# Linux
-curl -fsSL https://ollama.ai/install.sh | sh
+errbuddy node app.js        # instead of: node app.js
+errbuddy npm start          # instead of: npm start
+errbuddy java MyApp         # instead of: java MyApp
+errbuddy dotnet run         # instead of: dotnet run
 ```
 
-### 2. Start Ollama & Download Model
+### Options
 
-```bash
-ollama serve   # Start the server (keep this running)
-ollama pull llama3.2   # Download the model (~2GB)
-```
-### 3. Install Error Buddy
+| Option | What it does |
+|---|---|
+| `--model <name>` | Use a different Ollama model, e.g. `--model llama3.2` for richer answers |
+| `--offline` | Skip AI and use built-in pattern matching only |
+| `--no-ai` | Show errors without any explanation |
+| `-V, --version` | Show the installed version |
+| `-h, --help` | Show help |
 
-```bash
-# From this directory
-npm install
-npm link   # Makes 'errbuddy' available globally
-```
+| Command | What it does |
+|---|---|
+| `errbuddy examples` | Show usage examples |
+| `errbuddy config` | Show the current model and Ollama URL |
 
-### 4. Use It!
+> Put errbuddy's own options **before** your command: `errbuddy --model llama3.2 node app.js`. Anything after the command is passed straight through to it.
 
-```bash
-# Instead of: node app.js
+## Supported languages
+
+| Language | Detected errors include |
+|---|---|
+| JavaScript / Node.js | `TypeError`, `ReferenceError`, `SyntaxError`, missing modules |
+| Java | `NullPointerException`, `ArrayIndexOutOfBoundsException`, `ClassNotFoundException`, compile errors |
+| C# / .NET | `NullReferenceException`, `IndexOutOfRangeException`, `CSxxxx` compiler errors |
+
+With AI enabled, errbuddy can explain other errors too; pattern matching covers the cases above.
+
+## How it works
+
+```text
 errbuddy node app.js
-
-# Instead of: npm start
-errbuddy npm start
-
-# Instead of: java MyApp
-errbuddy java MyApp
-
-# Instead of: dotnet run
-errbuddy dotnet run
+        │
+        ▼
+ Runs your command ──► stdout is shown as normal
+        │              stderr is shown AND captured
+        ▼
+ Error detector ──► finds the language, error type, file and line
+        │
+        ▼
+ Sanitizer ──► strips file paths and anything that looks like a secret
+        │
+        ├── Ollama running? ──► local AI explains WHAT / WHY / FIX / EXAMPLE
+        └── Not running?    ──► built-in pattern explanation
+        │
+        ▼
+ Formatted explanation printed under the error, then your exit code is returned
 ```
 
-## Supported Languages
+Want the design reasoning? See [architecture](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/docs/architecture.md) and [design decisions](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/docs/decisions.md).
 
-| Language | Status | Error Types |
-|----------|--------|-------------|
-| JavaScript/Node.js | ✅ Full | TypeError, ReferenceError, SyntaxError, Module errors |
-| Java | ✅ Full | NullPointer, ArrayIndex, ClassNotFound, Compile errors |
-| C#/.NET | ✅ Full | NullReference, Index, CS errors, Runtime exceptions |
+## Privacy
 
-## CLI Options
+- The AI runs **100% locally** through Ollama. Nothing is sent to the cloud.
+- Before an error reaches the model, absolute file paths (`/Users/...`, `C:\Users\...`) are replaced with `[path]` and values that look like API keys, tokens or passwords are replaced with `[REDACTED]`.
+- No telemetry, no analytics, no account.
+- A local history of errors and explanations is kept in `~/.errbuddy/history.json`. Delete that file at any time to clear it.
 
-```bash
-# Disable AI (use pattern matching only)
-errbuddy --no-ai node app.js
+## VS Code extension
 
-# Use a different Ollama model
-errbuddy --model codellama node app.js
+The repo also includes an Error Buddy extension for VS Code that explains errors from the integrated terminal or from selected text. It isn't on the Marketplace yet. To try it, install [`error-buddy-1.0.0.vsix`](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/tree/main/error-solution-ai-buddy/extension) with **Extensions → … → Install from VSIX**.
 
-# Force offline mode
-errbuddy --offline node app.js
-
-# Show examples
-errbuddy examples
-
-# Show configuration
-errbuddy config
-```
-
-## How It Works
-
-```
-┌─────────────────────────────────────────┐
-│  You run: errbuddy node app.js          │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│  CLI spawns: node app.js                │
-│  • stdout → displayed normally          │
-│  • stderr → captured for analysis       │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│  Error Detector                         │
-│  • Detects language (JS/Java/C#)        │
-│  • Extracts error type, file, line      │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│  Ollama AI (local)                      │
-│  • Receives sanitized error             │
-│  • Returns structured explanation       │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│  Pretty Terminal Output                 │
-│  • WHAT / WHY / FIX / EXAMPLE           │
-└─────────────────────────────────────────┘
-```
-
-## Privacy & Security
-
-Your code **never leaves your machine**:
-
-- ✅ Ollama runs 100% locally
-- ✅ File paths are stripped before AI processing
-- ✅ No telemetry or analytics
-- ✅ No API keys required
-- ✅ Works completely offline
-
-## Project Structure
-
-```
-error-solution-ai-buddy/
-├── cli/
-│   ├── index.js           # CLI entry point
-│   ├── error-listener.js  # Error detection & patterns
-│   └── formatter.js       # Terminal output formatting
-├── backend/
-│   └── src/
-│       ├── ai/
-│       │   └── ollama-service.js  # Ollama integration
-│       └── services/
-│           └── history-service.js # Error history (SQLite)
-├── docs/
-│   ├── architecture.md    # System design
-│   ├── decisions.md       # Why we made these choices
-│   └── terminal-integration.md
-├── tests/
-│   └── *.test.js
-├── package.json
-└── README.md
-```
-
-## Configuration
-
-Configuration is stored in `~/.errbuddy/config.json`:
-
-```json
-{
-  "ollamaUrl": "http://localhost:11434",
-  "model": "llama3.2",
-  "showSpinner": true,
-  "saveHistory": true
-}
-```
+Commands: *Explain Selected Error*, *Explain Last Terminal Error*, *Toggle Auto-Explain*, *Open Error Buddy Terminal*, *Show Error History*.
 
 ## Troubleshooting
 
-### "Ollama not detected"
+**"Ollama not detected"**
+1. Open the Ollama app, or run `ollama serve`
+2. Check it responds: `curl http://localhost:11434/api/tags`
+3. Make sure you have a model: `ollama pull qwen2.5:0.5b`
 
-1. Make sure Ollama is running: `ollama serve`
-2. Check it's accessible: `curl http://localhost:11434/api/tags`
-3. Pull a model: `ollama pull qwen2.5:0.5b`
+**The AI explanation timed out**
+Your machine may be busy or the model too large. Use the default `qwen2.5:0.5b`, or run with `--offline`.
 
-### "AI explanation timed out"
+**`errbuddy: command not found`**
+Restart your terminal. If it still fails, check that npm's global bin folder is on your `PATH` (`npm prefix -g` shows where it is).
 
-- Try a smaller model: `errbuddy --model llama3.2:1b node app.js`
-- Check system resources (Ollama needs ~4GB RAM)
+## Development
 
-### Command not found after `npm link`
+```bash
+git clone https://github.com/sithija-jayasinghe/solution-ai-buddy-v1.git
+cd solution-ai-buddy-v1/error-solution-ai-buddy
+npm install
+npm test          # 62 tests, Node's built-in test runner
+npm link          # use your local copy as the global `errbuddy`
+```
 
-- On Windows: Restart your terminal
-- On macOS/Linux: Check your PATH includes npm global bin
+```text
+error-solution-ai-buddy/
+├── cli/
+│   ├── index.js            # CLI entry: runs the command, wires everything together
+│   ├── error-listener.js   # language detection and error patterns
+│   └── formatter.js        # terminal output
+├── backend/src/
+│   ├── ai/ollama-service.js            # Ollama client, prompt and response parsing
+│   └── services/history-service.js     # local error history
+├── extension/              # VS Code extension (TypeScript)
+├── docs/                   # architecture and design decisions
+└── tests/
+```
+
+## Roadmap
+
+- [ ] Python and Go error patterns
+- [ ] Optional cloud models (bring your own API key) for people who don't want to run Ollama
+- [ ] `errbuddy history` command to search past errors
+- [ ] Publish the VS Code extension to the Marketplace
 
 ## Contributing
 
-1. Fork the repo
-2. Create a feature branch
-3. Submit a PR
+Issues and pull requests are welcome. If errbuddy explained something badly, [open an issue](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/issues) with the error text so the patterns and prompts can improve.
 
 ## License
 
-MIT © 2024
+[MIT](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/LICENSE) © Sithija Harshana Jayasinghe
