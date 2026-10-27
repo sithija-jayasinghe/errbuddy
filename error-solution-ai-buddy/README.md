@@ -24,8 +24,9 @@ When an error shows up, most of us copy it, open a browser, paste it into a sear
 
 - **Zero context switching.** The explanation appears right under the error.
 - **Private by default.** The AI runs locally through [Ollama](https://ollama.com). Your code and errors never leave your computer.
-- **Free.** No API keys, no accounts, no usage limits.
-- **Works offline, and without AI.** If Ollama isn't running, errbuddy falls back to built-in explanations for common errors.
+- **No room for a local model? Use the cloud.** Bring a free [Gemini](https://aistudio.google.com/apikey) API key instead. Opt-in only.
+- **Free.** Both AI options are free. No accounts with errbuddy, no usage limits from us.
+- **Works offline, and without AI.** If no AI is available, errbuddy falls back to built-in explanations for common errors.
 - **Drop-in.** Your program runs exactly as before: same output, same input, same exit code.
 
 ## Quick start
@@ -39,6 +40,16 @@ That's it. You'll get pattern-based explanations straight away.
 
 ### Turn on AI explanations (optional)
 
+Pick whichever suits your machine:
+
+| | **Local: Ollama** (default) | **Cloud: Gemini** |
+|---|---|---|
+| Privacy | Errors never leave your computer | Sanitized errors are sent to Google |
+| Needs | ~400 MB disk + a few GB of RAM | Internet + a free API key |
+| Works offline | Yes | No |
+
+**Option A: Local with Ollama**
+
 1. Install Ollama from [ollama.com/download](https://ollama.com/download)
 2. Download the default model (about 400 MB, runs fine on low-RAM laptops):
    ```bash
@@ -47,6 +58,20 @@ That's it. You'll get pattern-based explanations straight away.
 3. Make sure Ollama is running: open the Ollama app, or run `ollama serve`
 
 The next time you run `errbuddy`, it detects Ollama automatically. If the default model isn't installed but another one is, errbuddy uses that instead.
+
+**Option B: Cloud with Gemini**
+
+1. Create a free API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+2. Save it in your shell (add this line to `~/.zshrc` or `~/.bashrc` to keep it):
+   ```bash
+   export GEMINI_API_KEY="your-key"
+   ```
+3. Run with the Gemini provider:
+   ```bash
+   errbuddy --provider gemini node app.js
+   ```
+
+To make Gemini your default, also set `export ERRBUDDY_PROVIDER=gemini`. The free tier has rate limits; if you hit one, errbuddy falls back to pattern matching and tells you why.
 
 ## Usage
 
@@ -63,7 +88,8 @@ errbuddy dotnet run         # instead of: dotnet run
 
 | Option | What it does |
 |---|---|
-| `--model <name>` | Use a different Ollama model, e.g. `--model llama3.2` for richer answers |
+| `--provider <name>` | `ollama` (local, default) or `gemini` (cloud, needs `GEMINI_API_KEY`) |
+| `--model <name>` | Use a different model, e.g. `--model llama3.2` for Ollama or `--model gemini-3.8-flash` for Gemini |
 | `--offline` | Skip AI and use built-in pattern matching only |
 | `--no-ai` | Show errors without any explanation |
 | `-V, --version` | Show the installed version |
@@ -72,7 +98,12 @@ errbuddy dotnet run         # instead of: dotnet run
 | Command | What it does |
 |---|---|
 | `errbuddy examples` | Show usage examples |
-| `errbuddy config` | Show the current model and Ollama URL |
+| `errbuddy config` | Show the current provider, model and whether an API key is set |
+
+| Environment variable | What it does |
+|---|---|
+| `GEMINI_API_KEY` | Your Gemini API key (only needed for `--provider gemini`) |
+| `ERRBUDDY_PROVIDER` | Default provider when `--provider` isn't given (`ollama` or `gemini`) |
 
 > Put errbuddy's own options **before** your command: `errbuddy --model llama3.2 node app.js`. Anything after the command is passed straight through to it.
 
@@ -100,8 +131,9 @@ errbuddy node app.js
         ▼
  Sanitizer ──► strips file paths and anything that looks like a secret
         │
-        ├── Ollama running? ──► local AI explains WHAT / WHY / FIX / EXAMPLE
-        └── Not running?    ──► built-in pattern explanation
+        ├── AI available? ──► Ollama (local) or Gemini (cloud) explains
+        │                     WHAT / WHY / FIX / EXAMPLE
+        └── Not available? ──► built-in pattern explanation
         │
         ▼
  Formatted explanation printed under the error, then your exit code is returned
@@ -111,7 +143,9 @@ Want the design reasoning? See [architecture](https://github.com/sithija-jayasin
 
 ## Privacy
 
-- The AI runs **100% locally** through Ollama. Nothing is sent to the cloud.
+- By default the AI runs **100% locally** through Ollama. Nothing is sent to the cloud.
+- The cloud provider is **opt-in only**: errbuddy talks to Gemini only when you pass `--provider gemini` or set `ERRBUDDY_PROVIDER=gemini`. In that mode the sanitized error text is sent to Google's Gemini API and is handled under [Google's terms](https://ai.google.dev/gemini-api/terms) (on the free tier, Google may use it to improve its products).
+- Your API key is read from `GEMINI_API_KEY` and sent in a request header, never in a URL or command-line argument.
 - Before an error reaches the model, absolute file paths (`/Users/...`, `C:\Users\...`) are replaced with `[path]` and values that look like API keys, tokens or passwords are replaced with `[REDACTED]`.
 - No telemetry, no analytics, no account.
 - A local history of errors and explanations is kept in `~/.errbuddy/history.json`. Delete that file at any time to clear it.
@@ -129,6 +163,12 @@ Commands: *Explain Selected Error*, *Explain Last Terminal Error*, *Toggle Auto-
 2. Check it responds: `curl http://localhost:11434/api/tags`
 3. Make sure you have a model: `ollama pull qwen2.5:0.5b`
 
+**"GEMINI_API_KEY is not set"**
+Create a key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and run `export GEMINI_API_KEY="your-key"` in the same terminal. Check with `errbuddy config`.
+
+**"Gemini rejected the API key" / "rate limit reached"**
+Double-check the key (no extra spaces or quotes). Rate limits on the free tier reset after a minute.
+
 **The AI explanation timed out**
 Your machine may be busy or the model too large. Use the default `qwen2.5:0.5b`, or run with `--offline`.
 
@@ -141,7 +181,7 @@ Restart your terminal. If it still fails, check that npm's global bin folder is 
 git clone https://github.com/sithija-jayasinghe/solution-ai-buddy-v1.git
 cd solution-ai-buddy-v1/error-solution-ai-buddy
 npm install
-npm test          # 62 tests, Node's built-in test runner
+npm test          # 77 tests, Node's built-in test runner
 npm link          # use your local copy as the global `errbuddy`
 ```
 
@@ -152,7 +192,9 @@ error-solution-ai-buddy/
 │   ├── error-listener.js   # language detection and error patterns
 │   └── formatter.js        # terminal output
 ├── backend/src/
-│   ├── ai/ollama-service.js            # Ollama client, prompt and response parsing
+│   ├── ai/prompt.js                    # shared prompt + response parsing
+│   ├── ai/ollama-service.js            # local provider (Ollama)
+│   ├── ai/gemini-service.js            # cloud provider (Gemini)
 │   └── services/history-service.js     # local error history
 ├── extension/              # VS Code extension (TypeScript)
 ├── docs/                   # architecture and design decisions
@@ -162,7 +204,8 @@ error-solution-ai-buddy/
 ## Roadmap
 
 - [ ] Python and Go error patterns
-- [ ] Optional cloud models (bring your own API key) for people who don't want to run Ollama
+- [x] Optional cloud model (bring your own Gemini API key) for people who can't run Ollama
+- [ ] More cloud providers (OpenAI, Claude)
 - [ ] `errbuddy history` command to search past errors
 - [ ] Publish the VS Code extension to the Marketplace
 
