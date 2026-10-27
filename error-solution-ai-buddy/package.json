@@ -5,7 +5,7 @@
   "type": "module",
   "main": "cli/index.js",
   "bin": {
-    "errbuddy": "./cli/index.js"
+    "errbuddy": "cli/index.js"
   },
   "files": [
     "cli",
