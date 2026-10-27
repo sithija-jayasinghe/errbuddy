@@ -18,16 +18,23 @@ import { spawn } from 'child_process';
 import { ErrorListener } from './error-listener.js';
 import { Formatter } from './formatter.js';
 import { AIService } from '../backend/src/ai/ollama-service.js';
+import { GeminiService, GEMINI_DEFAULT_MODEL, GEMINI_KEY_URL } from '../backend/src/ai/gemini-service.js';
 import { HistoryService } from '../backend/src/services/history-service.js';
 import chalk from 'chalk';
+import { createRequire } from 'module';
+
+const { version } = createRequire(import.meta.url)('../package.json');
 
 const program = new Command();
+
+const PROVIDERS = ['ollama', 'gemini'];
 
 // Configuration
 const CONFIG = {
   aiEnabled: true,
   ollamaModel: 'qwen2.5:0.5b',  // Small model that works on low-RAM systems
   ollamaUrl: 'http://localhost:11434',
+  provider: process.env.ERRBUDDY_PROVIDER || 'ollama',  // 'ollama' (local) or 'gemini' (cloud)
   showSpinner: true,
   maxErrorLength: 2000,  // Truncate very long errors
 };
@@ -35,13 +42,14 @@ const CONFIG = {
 program
   .name('errbuddy')
   .description('AI-powered error explanations directly in your terminal')
-  .version('1.0.0')
+  .version(version)
   .enablePositionalOptions()
   .passThroughOptions()
   .argument('<command>', 'Command to run (node, npm, java, dotnet, etc.)')
   .argument('[args...]', 'Arguments to pass to the command')
   .option('--no-ai', 'Disable AI explanations (show errors only)')
-  .option('--model <model>', 'Ollama model to use', 'qwen2.5:0.5b')
+  .option('--provider <name>', `AI provider: ollama (local, default) or gemini (cloud, needs GEMINI_API_KEY)`)
+  .option('--model <model>', `Model to use (default: qwen2.5:0.5b for Ollama, ${GEMINI_DEFAULT_MODEL} for Gemini)`)
   .option('--offline', 'Force offline mode (pattern matching only)')
   .action(async (command, args, options) => {
     await runCommand(command, args, options);
@@ -61,6 +69,8 @@ program
     console.log('  ' + chalk.gray('→ Run Java program with error explanations\n'));
     console.log('  ' + chalk.green('errbuddy dotnet run'));
     console.log('  ' + chalk.gray('→ Run .NET project with error explanations\n'));
+    console.log('  ' + chalk.green('errbuddy --provider gemini node app.js'));
+    console.log('  ' + chalk.gray('→ Use Gemini in the cloud instead of a local model (needs GEMINI_API_KEY)\n'));
     console.log('  ' + chalk.green('errbuddy --no-ai node app.js'));
     console.log('  ' + chalk.gray('→ Run without AI (pattern matching only)\n'));
   });
@@ -71,9 +81,16 @@ program
   .description('Show current configuration')
   .action(() => {
     console.log(chalk.cyan('\n⚙️  Current Configuration:\n'));
+    const provider = CONFIG.provider.toLowerCase();
     console.log(`  AI Enabled:    ${CONFIG.aiEnabled ? chalk.green('Yes') : chalk.red('No')}`);
-    console.log(`  Ollama Model:  ${chalk.yellow(CONFIG.ollamaModel)}`);
-    console.log(`  Ollama URL:    ${chalk.gray(CONFIG.ollamaUrl)}`);
+    console.log(`  Provider:      ${chalk.yellow(provider)}${process.env.ERRBUDDY_PROVIDER ? chalk.gray(' (from ERRBUDDY_PROVIDER)') : ''}`);
+    if (provider === 'gemini') {
+      console.log(`  Gemini Model:  ${chalk.yellow(GEMINI_DEFAULT_MODEL)}`);
+      console.log(`  API Key:       ${process.env.GEMINI_API_KEY ? chalk.green('set (GEMINI_API_KEY)') : chalk.red('not set - create one at ' + GEMINI_KEY_URL)}`);
+    } else {
+      console.log(`  Ollama Model:  ${chalk.yellow(CONFIG.ollamaModel)}`);
+      console.log(`  Ollama URL:    ${chalk.gray(CONFIG.ollamaUrl)}`);
+    }
     console.log('');
   });
 
@@ -115,19 +132,21 @@ function sanitizeError(errorText) {
 async function runCommand(command, args, options) {
   const formatter = new Formatter();
   const errorListener = new ErrorListener();
-  const aiService = new AIService(CONFIG.ollamaUrl, options.model || CONFIG.ollamaModel);
   const history = new HistoryService();
 
-  // Check if Ollama is available (non-blocking)
-  let ollamaAvailable = false;
+  const provider = (options.provider || CONFIG.provider).toLowerCase();
+  if (!PROVIDERS.includes(provider)) {
+    console.error(chalk.red(`❌ Unknown provider "${provider}". Use one of: ${PROVIDERS.join(', ')}`));
+    process.exit(1);
+  }
+  const aiService = createAIService(provider, options.model);
+
+  // Check if the AI provider is available (non-blocking)
+  let aiAvailable = false;
   if (!options.offline && options.ai !== false) {
-    ollamaAvailable = await aiService.checkConnection();
-    if (!ollamaAvailable) {
-      console.log(chalk.yellow('⚠️  Ollama not detected. Using pattern matching only.'));
-      console.log(chalk.gray('   For AI explanations (free, runs locally):'));
-      console.log(chalk.gray('     1. Install Ollama:   https://ollama.com/download'));
-      console.log(chalk.gray(`     2. Download a model: ollama pull ${options.model || CONFIG.ollamaModel}`));
-      console.log(chalk.gray('     3. Start it:         ollama serve\n'));
+    aiAvailable = await aiService.checkConnection();
+    if (!aiAvailable) {
+      printSetupHelp(provider, options.model);
     }
   }
 
@@ -182,7 +201,7 @@ async function runCommand(command, args, options) {
         console.log(''); // Blank line for readability
         
         // Try AI explanation if available
-        if (ollamaAvailable && options.ai !== false) {
+        if (aiAvailable && options.ai !== false) {
           const explanation = await explainWithAI(stderrBuffer, analysis, aiService, formatter);
           try { history.saveError({ ...analysis, fullText: stderrBuffer }, explanation, `${command} ${args.join(' ')}`); } catch {}
         } else {
@@ -211,12 +230,41 @@ async function runCommand(command, args, options) {
 }
 
 /**
+ * Create the AI service for the chosen provider
+ */
+function createAIService(provider, model) {
+  if (provider === 'gemini') {
+    return new GeminiService({ model: model || GEMINI_DEFAULT_MODEL });
+  }
+  return new AIService(CONFIG.ollamaUrl, model || CONFIG.ollamaModel);
+}
+
+/**
+ * Tell the user how to turn on AI explanations for their provider
+ */
+function printSetupHelp(provider, model) {
+  if (provider === 'gemini') {
+    console.log(chalk.yellow('⚠️  GEMINI_API_KEY is not set. Using pattern matching only.'));
+    console.log(chalk.gray('   To use Gemini (free key, explanations are generated in the cloud):'));
+    console.log(chalk.gray(`     1. Create a key:  ${GEMINI_KEY_URL}`));
+    console.log(chalk.gray('     2. Set it:        export GEMINI_API_KEY="your-key"\n'));
+    return;
+  }
+  console.log(chalk.yellow('⚠️  Ollama not detected. Using pattern matching only.'));
+  console.log(chalk.gray('   For AI explanations (free, runs locally):'));
+  console.log(chalk.gray('     1. Install Ollama:   https://ollama.com/download'));
+  console.log(chalk.gray(`     2. Download a model: ollama pull ${model || CONFIG.ollamaModel}`));
+  console.log(chalk.gray('     3. Start it:         ollama serve'));
+  console.log(chalk.gray('   No room for a local model? Use the cloud instead: errbuddy --provider gemini ...\n'));
+}
+
+/**
  * Get AI explanation for an error
  */
 async function explainWithAI(errorText, analysis, aiService, formatter) {
   const ora = (await import('ora')).default;
   const spinner = ora({
-    text: 'Getting AI explanation...',
+    text: `Asking ${aiService.name || 'AI'} for an explanation...`,
     color: 'cyan'
   }).start();
 
@@ -232,6 +280,7 @@ async function explainWithAI(errorText, analysis, aiService, formatter) {
   } catch (err) {
     spinner.stop();
     console.log(chalk.yellow('⚠️  AI explanation failed. Showing pattern-based help:'));
+    if (err && err.message) console.log(chalk.gray(`   ${err.message}`));
     formatter.printPatternExplanation(analysis);
     return analysis.localExplanation;
   }
