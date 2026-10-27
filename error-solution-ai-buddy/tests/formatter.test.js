@@ -157,3 +157,28 @@ describe('Formatter Output Structure', () => {
     }
   });
 });
+
+describe('wrapText() with line breaks from the AI', () => {
+  const formatter = new Formatter();
+
+  it('keeps numbered steps on their own lines', () => {
+    const text = '1. Check how data is set so it really holds an array.\n2. Use optional chaining.\n3. Provide a fallback empty array.';
+    const lines = formatter.wrapText(text, 70).split('\n');
+    assert.deepStrictEqual(lines, [
+      '1. Check how data is set so it really holds an array.',
+      '2. Use optional chaining.',
+      '3. Provide a fallback empty array.',
+    ]);
+  });
+
+  it('wraps each line independently at the width', () => {
+    const text = 'short line\n' + 'word '.repeat(20).trim();
+    const lines = formatter.wrapText(text, 20).split('\n');
+    assert.strictEqual(lines[0], 'short line');
+    assert.ok(lines.every(line => line.length <= 20));
+  });
+
+  it('keeps blank lines between paragraphs', () => {
+    assert.strictEqual(formatter.wrapText('first\n\nsecond', 70), 'first\n\nsecond');
+  });
+});

@@ -190,8 +190,20 @@ export class Formatter {
    */
   wrapText(text, maxWidth = 70) {
     if (!text) return '';
-    
-    const words = text.split(' ');
+
+    // Wrap each line on its own so line breaks the AI wrote (numbered steps,
+    // bullet points) are kept instead of being counted as part of a word.
+    return text
+      .split('\n')
+      .map(line => this.wrapLine(line.trimEnd(), maxWidth))
+      .join('\n');
+  }
+
+  /**
+   * Wrap a single line (no newlines) at maxWidth
+   */
+  wrapLine(line, maxWidth) {
+    const words = line.split(' ').filter(word => word !== '');
     const lines = [];
     let currentLine = '';
 
