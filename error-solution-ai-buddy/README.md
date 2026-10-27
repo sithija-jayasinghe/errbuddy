@@ -8,15 +8,15 @@ Stop copying stack traces into a browser. Prefix your command with `errbuddy` an
 
 [![npm version](https://img.shields.io/npm/v/error-solution-ai-buddy?color=cb3837&logo=npm)](https://www.npmjs.com/package/error-solution-ai-buddy)
 [![npm downloads](https://img.shields.io/npm/dm/error-solution-ai-buddy)](https://www.npmjs.com/package/error-solution-ai-buddy)
-[![GitHub release](https://img.shields.io/github/v/release/sithija-jayasinghe/solution-ai-buddy-v1?logo=github)](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/releases)
+[![GitHub release](https://img.shields.io/github/v/release/sithija-jayasinghe/errbuddy?logo=github)](https://github.com/sithija-jayasinghe/errbuddy/releases)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
 ![AI](https://img.shields.io/badge/AI-local%20via%20Ollama-black)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sithija-jayasinghe/errbuddy/blob/main/error-solution-ai-buddy/LICENSE)
 
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sithija-jayasinghe/solution-ai-buddy-v1/main/error-solution-ai-buddy/docs/demo.gif" alt="errbuddy --provider gemini node app.js: a TypeError appears, Gemini is asked for an explanation, and a box explains what went wrong, why, and how to fix it" width="760">
+  <img src="https://raw.githubusercontent.com/sithija-jayasinghe/errbuddy/main/error-solution-ai-buddy/docs/demo.gif" alt="errbuddy --provider gemini node app.js: a TypeError appears, Gemini is asked for an explanation, and a box explains what went wrong, why, and how to fix it" width="760">
 </p>
 
 ## Why errbuddy
@@ -140,7 +140,7 @@ errbuddy node app.js
  Formatted explanation printed under the error, then your exit code is returned
 ```
 
-Want the design reasoning? See [architecture](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/docs/architecture.md) and [design decisions](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/docs/decisions.md).
+Want the design reasoning? See [architecture](https://github.com/sithija-jayasinghe/errbuddy/blob/main/error-solution-ai-buddy/docs/architecture.md) and [design decisions](https://github.com/sithija-jayasinghe/errbuddy/blob/main/error-solution-ai-buddy/docs/decisions.md).
 
 ## Privacy
 
@@ -153,7 +153,7 @@ Want the design reasoning? See [architecture](https://github.com/sithija-jayasin
 
 ## VS Code extension
 
-The repo also includes an Error Buddy extension for VS Code that explains errors from the integrated terminal or from selected text. It isn't on the Marketplace yet. To try it, install [`error-buddy-1.0.0.vsix`](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/tree/main/error-solution-ai-buddy/extension) with **Extensions → … → Install from VSIX**.
+The repo also includes an Error Buddy extension for VS Code that explains errors from the integrated terminal or from selected text. It isn't on the Marketplace yet. To try it, install [`error-buddy-1.0.0.vsix`](https://github.com/sithija-jayasinghe/errbuddy/tree/main/error-solution-ai-buddy/extension) with **Extensions → … → Install from VSIX**.
 
 Commands: *Explain Selected Error*, *Explain Last Terminal Error*, *Toggle Auto-Explain*, *Open Error Buddy Terminal*, *Show Error History*.
 
@@ -179,8 +179,8 @@ Restart your terminal. If it still fails, check that npm's global bin folder is 
 ## Development
 
 ```bash
-git clone https://github.com/sithija-jayasinghe/solution-ai-buddy-v1.git
-cd solution-ai-buddy-v1/error-solution-ai-buddy
+git clone https://github.com/sithija-jayasinghe/errbuddy.git
+cd errbuddy/error-solution-ai-buddy
 npm install
 npm test          # 86 tests, Node's built-in test runner
 npm link          # use your local copy as the global `errbuddy`
@@ -204,7 +204,7 @@ error-solution-ai-buddy/
 
 ### Releasing
 
-Every version is listed in [CHANGELOG.md](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/CHANGELOG.md) and on the [Releases page](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/releases).
+Every version is listed in [CHANGELOG.md](https://github.com/sithija-jayasinghe/errbuddy/blob/main/error-solution-ai-buddy/CHANGELOG.md) and on the [Releases page](https://github.com/sithija-jayasinghe/errbuddy/releases).
 
 1. Move the notes under `## [Unreleased]` in `CHANGELOG.md` into a new `## [x.y.z] - YYYY-MM-DD` section.
 2. Bump the version: `npm version patch` (or `minor` / `major`) inside `error-solution-ai-buddy/`.
@@ -223,8 +223,8 @@ Pushing the tag runs the tests and creates the GitHub Release automatically, usi
 
 ## Contributing
 
-Issues and pull requests are welcome. If errbuddy explained something badly, [open an issue](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/issues) with the error text so the patterns and prompts can improve.
+Issues and pull requests are welcome. If errbuddy explained something badly, [open an issue](https://github.com/sithija-jayasinghe/errbuddy/issues) with the error text so the patterns and prompts can improve.
 
 ## License
 
-[MIT](https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/blob/main/error-solution-ai-buddy/LICENSE) © Sithija Harshana Jayasinghe
+[MIT](https://github.com/sithija-jayasinghe/errbuddy/blob/main/error-solution-ai-buddy/LICENSE) © Sithija Harshana Jayasinghe

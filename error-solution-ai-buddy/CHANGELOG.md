@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-27
+
+### Changed
+- The GitHub repository is now named `errbuddy` (github.com/sithija-jayasinghe/errbuddy). Old links redirect automatically.
+- Cleaned up the `bin` entry in `package.json` so npm no longer warns when publishing.
+
 ## [1.1.0] - 2026-10-27
 
 ### Added
@@ -42,8 +48,9 @@ First release on npm.
 - Local error history in `~/.errbuddy/history.json`.
 - Options `--model`, `--offline` and `--no-ai`, and the `examples` and `config` commands.
 
-[Unreleased]: https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/compare/v1.0.2...v1.1.0
-[1.0.2]: https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/compare/v1.0.1...v1.0.2
-[1.0.1]: https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/releases/tag/v1.0.0
+[Unreleased]: https://github.com/sithija-jayasinghe/errbuddy/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/sithija-jayasinghe/errbuddy/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/sithija-jayasinghe/errbuddy/compare/v1.0.2...v1.1.0
+[1.0.2]: https://github.com/sithija-jayasinghe/errbuddy/compare/v1.0.1...v1.0.2
+[1.0.1]: https://github.com/sithija-jayasinghe/errbuddy/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/sithija-jayasinghe/errbuddy/releases/tag/v1.0.0

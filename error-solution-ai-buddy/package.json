@@ -1,6 +1,6 @@
 {
   "name": "error-solution-ai-buddy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "AI-powered error explanation tool for developers - works directly in your terminal",
   "type": "module",
   "main": "cli/index.js",
@@ -36,12 +36,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sithija-jayasinghe/solution-ai-buddy-v1.git",
+    "url": "git+https://github.com/sithija-jayasinghe/errbuddy.git",
     "directory": "error-solution-ai-buddy"
   },
-  "homepage": "https://github.com/sithija-jayasinghe/solution-ai-buddy-v1#readme",
+  "homepage": "https://github.com/sithija-jayasinghe/errbuddy#readme",
   "bugs": {
-    "url": "https://github.com/sithija-jayasinghe/solution-ai-buddy-v1/issues"
+    "url": "https://github.com/sithija-jayasinghe/errbuddy/issues"
   },
   "dependencies": {
     "chalk": "^5.3.0",
